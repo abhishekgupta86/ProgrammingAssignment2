@@ -6,33 +6,36 @@
 
 makeCacheMatrix <- function(x = matrix()) {
 
-    inverseMat<- NULL
-    mat<- NULL
-    get<- function()
-    {
-       print("get")
-        mat
-    }
-    set<- function(input)
-    {
-        print("set")
-        mat<<- input
-        inverseMat<<- NULL
-        
-    }
+  
+  mat <- NULL
+  m <- NULL
+  set <- function(y) {
+    print("setting")
+    mat <<- y
+    # m <<- NULL
+  }
+  get <- function() {
+    print("getting")
+    mat
+  }
+  setinv <- function(inv)
+  {m <<- inv
+  
+  
+  print("setting inv")
+  }
+  getinv <- function()
+  {
+    print("getting inv")
+    m
     
-    getInverse<- function(){
-       print("getInverse")
-        inverseMat  
-    }
-    setInverse<- function(input){
-        print("setInverse")
-        inverseMat<<- solve(mat)   
-    }
-   
-  list(get=get, set=set, getInverse= getInverse, setInverse=setInverse )  
+  }
+  list(set = set, get = get,
+       setinv = setinv,
+       getinv = getinv)
+
 }
-cacheFunction<- makeCacheMatrix()
+cachematrix<- makeCacheMatrix()
 
 ## This function first checks if the input is NULL or not then it checks if the matrix in the global variable has been 
 ## initialized if not then it initializes the matrix and sets the global variable of inverse of matrix, in the same condition 
@@ -40,21 +43,25 @@ cacheFunction<- makeCacheMatrix()
 ## cache value of the inverse of the matrix instead of performing entire operation
 
 cacheSolve <- function(x, ...) {
-   
-  result<- NULL
-  if(is.null(x)){
-     print("matrix is null")
-      return 
+
+    mat1 <- cachematrix$getinv()
+  print(1)
+  print(mat1)
+  if(!is.null(mat1)) {
+    message("getting cached data")
+    
+    return(mat1)
   }
- 
-  mat<- cacheFunction$get()
-  if(is.null(mat) | !identical(x, mat)){
-      cacheFunction$set(x)
-      cacheFunction$setInverse(cacheFunction$get())
-     
-  }
-  cacheFunction$getInverse()
- 
+  print(2)
+  cachematrix$set(x)
+ data <- cachematrix$get()
+  mat2 <- solve(data)
+  cachematrix$setinv(mat2)
+   mat3<- cachematrix$getinv()
+  print(4)
+  print(mat3)
+  mat3
+  
 }
 
 a<- matrix(data= 1:4, nrow=2,ncol=2)
